@@ -15,19 +15,19 @@ class UsersController extends BaseController
 
   public function index()
   {
-    $data = $this->model->getAll(); // fetch semua user
+    $data = $this->model->getAllData(); // fetch semua user
     return $this->response->setJSON($data);
   }
 
   public function create()
   {
     $data = [
-      'username' => 'johndoe',
-      'email' => 'john@example.com',
-      'password' => password_hash('123456', PASSWORD_DEFAULT)
+      'username' => 'johndoe2',
+      'email' => 'john2@example.com',
+      'password' => password_hash('12345678', PASSWORD_DEFAULT)
     ];
 
-    $result = $this->model->insert('users', $data);
+    $result = $this->model->insertData($data);
     return $this->response->setJSON($result);
   }
 }

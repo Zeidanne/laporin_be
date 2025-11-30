@@ -17,7 +17,7 @@ class UsersModel
     $this->serviceRole = getenv('SUPABASE_SERVICE_ROLE');
   }
 
-  public function getAll()
+  public function getAllData()
   {
     $response = $this->client->get(
       $this->url . "/rest/v1/users?select=*",
@@ -33,7 +33,7 @@ class UsersModel
     return json_decode($response->getBody(), true);
   }
 
-  public function insert($data)
+  public function insertData($data)
   {
     $response = $this->client->post(
       $this->url . "/rest/v1/users",
