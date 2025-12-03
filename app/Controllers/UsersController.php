@@ -42,8 +42,29 @@ class UsersController extends BaseController
         'error' => 'Invalid Format',
       ])->setStatusCode(400);
     }
-    $json['password'] = password_hash($json['password'], PASSWORD_DEFAULT);
-    $result = $this->model->insertData($json);
-    return $this->response->setJSON($result);
+
+    $requiredFields = ['username', 'email', 'password'];
+    foreach ($requiredFields as $field) {
+      if (empty($json[$field])) {
+        return $this->response->setJSON([
+          'error' => "Field $field is required",
+        ])->setStatusCode(422);
+      }
+    }
+
+    if (!filter_var($json['email'], FILTER_VALIDATE_EMAIL)) {
+      return $this->response->setJSON([
+        'error' => 'Invalid email format',
+      ])->setStatusCode(422);
+    }
+
+    if ($this->model->getByEmail($json['email'])) {
+      return $this->response->setJSON([
+        'error' => 'Email already registered',
+      ])->setStatusCode(409);
+    }
+
+    $result = $this->model->register($json);
+    return $this->response->setJSON($result)->setStatusCode(201);
   }
 }
