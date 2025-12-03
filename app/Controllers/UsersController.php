@@ -19,15 +19,17 @@ class UsersController extends BaseController
     return $this->response->setJSON($data);
   }
 
-  public function create()
+  public function insert()
   {
-    $data = [
-      'username' => 'johndoe2',
-      'email' => 'john2@example.com',
-      'password' => password_hash('12345678', PASSWORD_DEFAULT)
-    ];
+    $json = $this->request->getJSON(true);
 
-    $result = $this->model->insertData($data);
+    if (!$json) {
+      return $this->response->setJSON([
+        'error' => 'Invalid Format',
+      ])->setStatusCode(400);
+    }
+    $json['password'] = password_hash($json['password'], PASSWORD_DEFAULT);
+    $result = $this->model->insertData($json);
     return $this->response->setJSON($result);
   }
 }
