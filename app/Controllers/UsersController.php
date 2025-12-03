@@ -19,6 +19,20 @@ class UsersController extends BaseController
     return $this->response->setJSON($data);
   }
 
+  public function login()
+  {
+    $json = $this->request->getJSON(true);
+    $result = $this->model->login($json);
+
+    if (!$result) {
+      return $this->response->setJSON([
+        'error' => 'Wrong Credentials',
+      ])->setStatusCode(401);
+    }
+
+    return $this->response->setJSON($result);
+  }
+
   public function insert()
   {
     $json = $this->request->getJSON(true);

@@ -50,4 +50,37 @@ class UsersModel
 
     return json_decode($response->getBody(), true);
   }
+
+  public function login($data)
+  {
+    $email = $data['email'] ?? null;
+    $password = $data['password'] ?? null;
+
+    $response = $this->client->get(
+      $this->url . "/rest/v1/users?email=eq.$email&select=*",
+      [
+        'headers' => [
+          'apikey' => $this->serviceRole,
+          'Authorization' => 'Bearer ' . $this->serviceRole,
+          'Content-Type' => 'application/json',
+        ]
+      ]
+    );
+
+    $users = json_decode($response->getBody(), true);
+
+    // Kalau tidak ada user
+    if (empty($users)) {
+      return false;
+    }
+
+    $user = $users[0]; // Ambil user tunggal
+
+    // Verifikasi password
+    if (!password_verify($password, $user['password'])) {
+      return false;
+    }
+
+    return $user;
+  }
 }
