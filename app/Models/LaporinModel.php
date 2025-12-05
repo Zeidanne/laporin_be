@@ -34,4 +34,19 @@ class LaporinModel
 
     return json_decode($response->getBody(), true);
   }
+
+  public function getJenisLaporan()
+  {
+    $response = $this->client->get(
+      $this->url . "/rest/v1/jenis_laporan?select=*",
+      [
+        'headers' => [
+          'apikey' => $this->serviceRole,
+          'Authorization' => 'Bearer ' . $this->serviceRole,
+          'Content-Type' => 'application/json'
+        ]
+      ]
+    );
+    return json_decode($response->getBody(), true);
+  }
 }

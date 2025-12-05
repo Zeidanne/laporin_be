@@ -14,6 +14,12 @@ class LaporinController extends BaseController
     $this->model = new LaporinModel();
   }
 
+  public function jenisLaporan()
+  {
+    $data = $this->model->getJenisLaporan();
+    return $this->response->setJSON($data);
+  }
+
   public function insert()
   {
     $tindakModel = new TindakLanjutModel();
