@@ -105,4 +105,43 @@ class UsersModel
 
     return $user;
   }
+
+  public function getById($id)
+  {
+    if (!$id) {
+      return null;
+    }
+
+    $response = $this->client->get(
+      $this->url . "/rest/v1/users?id=eq.$id&select=*",
+      [
+        'headers' => $this->defaultHeaders()
+      ]
+    );
+
+    $users = json_decode($response->getBody(), true);
+
+    return $users[0] ?? null;
+  }
+
+  public function updateData($id, $data)
+  {
+    if (!$id || empty($data)) {
+      return null;
+    }
+
+    $response = $this->client->patch(
+      $this->url . "/rest/v1/users?id=eq.$id",
+      [
+        'headers' => array_merge($this->defaultHeaders(), [
+          'Prefer' => 'return=representation'
+        ]),
+        'json' => $data
+      ]
+    );
+
+    $result = json_decode($response->getBody(), true);
+
+    return $result[0] ?? null;
+  }
 }
