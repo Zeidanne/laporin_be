@@ -17,18 +17,67 @@ class LaporinModel
     $this->serviceRole = getenv('SUPABASE_SERVICE_ROLE');
   }
 
+  private function defaultHeaders(): array
+  {
+    return [
+      'apikey' => $this->serviceRole,
+      'Authorization' => 'Bearer ' . $this->serviceRole,
+      'Content-Type' => 'application/json'
+    ];
+  }
+
   public function insertData($data)
   {
     $response = $this->client->post(
       $this->url . "/rest/v1/laporin",
       [
-        'headers' => [
-          'apikey' => $this->serviceRole,
-          'Authorization' => 'Bearer ' . $this->serviceRole,
-          'Content-Type' => 'application/json',
+        'headers' => array_merge($this->defaultHeaders(), [
           'Prefer' => 'return=representation'
-        ],
+        ]),
         'json' => $data
+      ]
+    );
+
+    return json_decode($response->getBody(), true);
+  }
+
+  public function getAll(?int $status = null)
+  {
+    return $this->getAllForPenindak([
+      'status' => $status,
+      'jenis_laporan' => null,
+      'search' => null,
+    ]);
+  }
+
+  public function getAllForPenindak(array $filters = [])
+  {
+    $select = 'id,pelapor,jenis_laporan,alamat,waktu,bukti,catatan_pelapor,status,' .
+      'users:pelapor(username,email),' .
+      'jenis:jenis_laporan(nama),' .
+      'tindak:hasil_tindak(hasil,catatan_penindak,penindak)';
+
+    $query = 'select=' . $select;
+
+    if (isset($filters['status']) && $filters['status'] !== null && $filters['status'] !== '') {
+      $query .= '&status=eq.' . (int) $filters['status'];
+    }
+
+    if (!empty($filters['jenis_laporan'])) {
+      $query .= '&jenis_laporan=eq.' . $filters['jenis_laporan'];
+    }
+
+    if (!empty($filters['search'])) {
+      $search = rawurlencode($filters['search']);
+      $query .= "&or=(alamat.ilike.*$search*,catatan_pelapor.ilike.*$search*)";
+    }
+
+    $query .= '&order=waktu.desc';
+
+    $response = $this->client->get(
+      $this->url . "/rest/v1/laporin?" . $query,
+      [
+        'headers' => $this->defaultHeaders()
       ]
     );
 
@@ -40,11 +89,7 @@ class LaporinModel
     $response = $this->client->get(
       $this->url . "/rest/v1/jenis_laporan?select=*",
       [
-        'headers' => [
-          'apikey' => $this->serviceRole,
-          'Authorization' => 'Bearer ' . $this->serviceRole,
-          'Content-Type' => 'application/json'
-        ]
+        'headers' => $this->defaultHeaders()
       ]
     );
     return json_decode($response->getBody(), true);
@@ -77,11 +122,8 @@ class LaporinModel
     $response = $this->client->get(
       $this->url . "/rest/v1/" . $query,
       [
-        'headers' => [
-          'apikey' => $this->serviceRole,
-          'Authorization' => 'Bearer ' . $this->serviceRole,
-          'Content-Type' => 'application/json'
-        ]
+        'headers' => $this->defaultHeaders()
+
       ]
     );
 
@@ -98,11 +140,8 @@ class LaporinModel
     $response = $this->client->get(
       $this->url . "/rest/v1/" . $query,
       [
-        'headers' => [
-          'apikey' => $this->serviceRole,
-          'Authorization' => 'Bearer ' . $this->serviceRole,
-          'Content-Type' => 'application/json'
-        ]
+        'headers' => $this->defaultHeaders()
+
       ]
     );
 
