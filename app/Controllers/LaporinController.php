@@ -43,4 +43,60 @@ class LaporinController extends BaseController
 
     return $this->response->setJSON($result);
   }
+
+  public function riwayatUser($userId = null)
+  {
+    if (!$userId) {
+      return $this->response->setJSON([
+        'error' => 'User ID is required'
+      ])->setStatusCode(400);
+    }
+
+    // Ambil filter dari query params
+    $filters = [];
+    
+    $jenisLaporan = $this->request->getGet('jenis_laporan');
+    if ($jenisLaporan) {
+      $filters['jenis_laporan'] = $jenisLaporan;
+    }
+
+    $status = $this->request->getGet('status');
+    if ($status) {
+      $filters['status'] = $status;
+    }
+
+    $search = $this->request->getGet('search');
+    if ($search) {
+      $filters['search'] = $search;
+    }
+
+    $data = $this->model->getLaporanByPelapor($userId, $filters);
+
+    return $this->response->setJSON([
+      'success' => true,
+      'data' => $data
+    ]);
+  }
+
+  public function detailUser($id = null)
+  {
+    if (!$id) {
+      return $this->response->setJSON([
+        'error' => 'Laporan ID is required'
+      ])->setStatusCode(400);
+    }
+
+    $data = $this->model->getLaporanById($id);
+
+    if (!$data) {
+      return $this->response->setJSON([
+        'error' => 'Laporan not found'
+      ])->setStatusCode(404);
+    }
+
+    return $this->response->setJSON([
+      'success' => true,
+      'data' => $data
+    ]);
+  }
 }

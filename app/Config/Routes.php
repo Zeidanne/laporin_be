@@ -17,6 +17,8 @@ $routes->put('profile/(:num)', 'UsersController::updateProfile/$1');
 
 $routes->post('laporin', 'LaporinController::insert');
 $routes->get('laporin/jenis', 'LaporinController::jenisLaporan');
+$routes->get('laporin/riwayat/(:num)', 'LaporinController::riwayatUser/$1');
+$routes->get('laporin/detail/(:num)', 'LaporinController::detailUser/$1');
 
 $routes->post('media/upload', 'MediaController::uploadSingle');
 $routes->delete('media/delete', 'MediaController::deleteSingle');
