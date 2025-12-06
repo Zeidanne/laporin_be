@@ -20,5 +20,8 @@ $routes->get('laporin/jenis', 'LaporinController::jenisLaporan');
 $routes->get('laporin/riwayat/(:num)', 'LaporinController::riwayatUser/$1');
 $routes->get('laporin/detail/(:num)', 'LaporinController::detailUser/$1');
 
+$routes->get('penindak/laporin', 'PenindakLaporinController::index');
+$routes->get('penindak/laporin/detail/(:num)', 'PenindakLaporinController::detail/$1');
+
 $routes->post('media/upload', 'MediaController::uploadSingle');
 $routes->delete('media/delete', 'MediaController::deleteSingle');
