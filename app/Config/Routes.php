@@ -11,6 +11,7 @@ $routes->get('users', 'UsersController::index');
 
 $routes->post('auth/register', 'UsersController::insert');
 $routes->post('auth/login', 'UsersController::login');
+$routes->post('auth/login/google', 'UsersController::loginGoogle');
 
 $routes->get('profile/(:num)', 'UsersController::getProfile/$1');
 $routes->put('profile/(:num)', 'UsersController::updateProfile/$1');

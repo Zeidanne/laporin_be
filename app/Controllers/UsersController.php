@@ -33,6 +33,21 @@ class UsersController extends BaseController
     return $this->response->setJSON($result);
   }
 
+  public function loginGoogle()
+  {
+    $json = $this->request->getJSON(true);
+
+    if (!$json) {
+      return $this->response->setJSON([
+        'error' => 'Invalid Format',
+      ])->setStatusCode(400);
+    }
+    $json['roles'] = $json['roles'] ?? 2;
+
+    $result = $this->model->googleAuth($json);
+    return $this->response->setJSON($result);
+  }
+
   public function insert()
   {
     $json = $this->request->getJSON(true);
@@ -43,6 +58,7 @@ class UsersController extends BaseController
       ])->setStatusCode(400);
     }
     $json['password'] = password_hash($json['password'], PASSWORD_DEFAULT);
+    $json['roles'] = $json['roles'] ?? 2;
     $result = $this->model->insertData($json);
     return $this->response->setJSON($result);
   }

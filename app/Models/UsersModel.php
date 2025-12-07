@@ -38,6 +38,36 @@ class UsersModel
     return json_decode($response->getBody(), true);
   }
 
+  public function googleAuth($data)
+  {
+    // Cek apakah user sudah ada berdasarkan email
+    $existing = $this->client->get(
+      $this->url . "/rest/v1/users?email=eq." . $data['email'],
+      [
+        'headers' => $this->defaultHeaders()
+      ]
+    );
+
+    $existingData = json_decode($existing->getBody(), true);
+
+    if (!empty($existingData)) {
+      return $existingData;
+    }
+
+    $response = $this->client->post(
+      $this->url . "/rest/v1/users",
+      [
+        'headers' => array_merge($this->defaultHeaders(), [
+          'Prefer' => 'return=representation'
+        ]),
+        'json' => $data
+      ]
+    );
+
+    return json_decode($response->getBody(), true);
+  }
+
+
   public function insertData($data)
   {
     $response = $this->client->post(
@@ -49,7 +79,6 @@ class UsersModel
         'json' => $data
       ]
     );
-
     return json_decode($response->getBody(), true);
   }
 
