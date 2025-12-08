@@ -148,4 +148,24 @@ class LaporinModel
     $result = json_decode($response->getBody(), true);
     return $result[0] ?? null;
   }
+
+  /**
+   * Update status laporan
+   * 0 = Belum Ditindak, 1 = Sedang Diproses, 2 = Selesai
+   */
+  public function updateStatus($id, $status)
+  {
+    $response = $this->client->request(
+      'PATCH',
+      $this->url . "/rest/v1/laporin?id=eq.$id",
+      [
+        'headers' => array_merge($this->defaultHeaders(), [
+          'Prefer' => 'return=representation'
+        ]),
+        'json' => ['status' => $status]
+      ]
+    );
+
+    return json_decode($response->getBody(), true);
+  }
 }
