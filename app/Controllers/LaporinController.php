@@ -86,7 +86,8 @@ class LaporinController extends BaseController
       ])->setStatusCode(400);
     }
 
-    $data = $this->model->getLaporanById($id);
+    // Gunakan method khusus untuk user yang memberikan data simplified
+    $data = $this->model->getLaporanDetailForUser($id);
 
     if (!$data) {
       return $this->response->setJSON([

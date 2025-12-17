@@ -150,6 +150,44 @@ class LaporinModel
   }
 
   /**
+   * Get laporan detail untuk user (simplified view)
+   * Hanya menampilkan informasi yang diperlukan untuk user melihat detail laporan mereka
+   */
+  public function getLaporanDetailForUser($id)
+  {
+    // Query dengan join untuk mendapatkan nama jenis laporan dan catatan petugas
+    $query = "laporin?id=eq.$id&select=*,jenis_laporan(nama),tindak_lanjut:hasil_tindak(catatan_penindak)";
+
+    $response = $this->client->get(
+      $this->url . "/rest/v1/" . $query,
+      [
+        'headers' => $this->defaultHeaders()
+      ]
+    );
+
+    $result = json_decode($response->getBody(), true);
+    if (!empty($result)) {
+      $data = $result[0];
+      
+      // Format response untuk memudahkan frontend
+      return [
+        'id' => $data['id'],
+        'pelapor' => $data['pelapor'],
+        'alamat' => $data['alamat'],
+        'jenis_laporan' => $data['jenis_laporan'],
+        'jenis_laporan_nama' => $data['jenis_laporan']['nama'] ?? '',
+        'waktu' => $data['waktu'],
+        'catatan_pelapor' => $data['catatan_pelapor'],
+        'bukti' => $data['bukti'],
+        'status' => $data['status'],
+        'catatan_dari_petugas' => $data['tindak_lanjut']['catatan_penindak'] ?? ''
+      ];
+    }
+    
+    return null;
+  }
+
+  /**
    * Update status laporan
    * 0 = Belum Ditindak, 1 = Sedang Diproses, 2 = Selesai
    */
